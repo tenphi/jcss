@@ -1,7 +1,7 @@
 {
   "name": "jss",
   "description": "JSS - simple css framework based on native js-objects.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Andrey Yamanov <tenphi@gmail.com>",
   "contributors": [ 
     { "name": "Andrey Yamanov", "email": "tenphi@gmail.com" }
