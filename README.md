@@ -91,7 +91,7 @@ module.exports = {
 var jss = require('jss');
 jss.handler('borderRadius', function(value) {
     /* auto join */
-    return jss.joinPrefixes({borderRadius: value}, ['Moz', 'Webkit']);
+    return jss.join({borderRadius: value}, ['Moz', 'Webkit']);
     /* or manual */
     return {
         borderRadius: value,
@@ -100,7 +100,7 @@ jss.handler('borderRadius', function(value) {
     }
 });
 
-/* styles */
+/* styles.js */
 module.exports = {
     '.rounded': {
         borderRadius: '5px'
