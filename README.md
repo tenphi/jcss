@@ -30,6 +30,7 @@ app.configure('production', function() {
         res.send(jss.render(styles, true)); // minified
     });
 });
+app.listen(80);
 ```
 
 Check *styles.css* in your browser.
@@ -89,7 +90,7 @@ module.exports = {
 ```javascript
 /* app.js */
 var jss = require('jss');
-jss.handler('borderRadius', function(value) {
+jss.mixin('borderRadius', function(value) {
     /* auto join */
     return jss.join({borderRadius: value}, ['Moz', 'Webkit']);
     /* or manual */
