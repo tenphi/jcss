@@ -7,4 +7,4 @@ jss.mixin('borderRadius', function(value) {
 
 console.log(jss.render(styles));
 
-//console.log(jss.render(styles, true));
+console.log(jss.render(styles, true));
