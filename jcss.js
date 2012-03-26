@@ -293,7 +293,9 @@ var init = (function($) {
         });
     });
     
-})(jQuery);
+    return jcss;
+    
+});
 
 try {
 	/* nodejs stuff */
