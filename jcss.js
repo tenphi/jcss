@@ -1,37 +1,29 @@
 /*!
-* jQuery JSS plugin
+* jQuery JCSS plugin
 * Copyright(c) 2012 Andrey Yamanov <tenphi@gmail.com>
 * MIT Licensed
 * @version 0.3.1
 */
 
-try {
-	/* nodejs stuff */
-	var jQuery = require('jQuery');
-} catch(e) {
-	/* nothing */
-}
+(function() {
+    
 
-(function($) {
+var init = (function($) {
     
     /* Check jQuery Version */
     if (!$) throw {message: 'jQuery not found.'};
     
     var isArray = $.isArray,
         map = $.map,
-        isFunction = $.isFunction,
         isNumeric = $.isNumeric,
         isPlainObject = $.isPlainObject,
-        isEmptyObject = $.isEmptyObject,
         extend = $.extend,
         isString = function(value) {
             return typeof(value) === 'string';
-        },
-        name2class = function(name) {
-            return name.toLowerCase().replace(/\./g, '-');
         };
 	
-    var jss = {
+    var jcss = {
+        _jQuery: $,
         
         /* active or not */
         status: true,
@@ -63,7 +55,7 @@ try {
             }, dec, sel, fsel, styles, style, value, values, fixedStyle, i, out = '';
 
             if (!isPlainObject(css)) {
-                throw {message: 'jss: wrong input data'};
+                throw {message: 'jcss: wrong input data'};
             }
             if (!namespace) {
                 namespace = '';
@@ -281,7 +273,7 @@ try {
         
     };
     
-    $.jss = jss;
+    $.jcss = jcss;
     
     /* mixins */
     
@@ -294,9 +286,9 @@ try {
     ];
     
     $.each(list, function(i, name) {
-        jss.mixin(name, function(value) {
+        jcss.mixin(name, function(value) {
             var styles = {};
-            styles[name] = jss.px(value);
+            styles[name] = jcss.px(value);
             return styles;
         });
     });
@@ -305,7 +297,20 @@ try {
 
 try {
 	/* nodejs stuff */
-	module.exports = jQuery.jss;
+    if (!module.exports) throw '';
+    var $ = require('jQuery');
+    var jcss = init($);
+    jcss.jQuery = function jQuery($) {
+        if (!$) {
+            return jcss._jQuery;
+        }
+        var jcss = init($);
+        jcss.jQuery = jQuery;
+        return jcss;
+    }
+	module.exports = jcss;
 } catch(e) {
-	/* nothing */
+	init(jQuery);
 }
+
+})();

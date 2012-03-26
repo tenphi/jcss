@@ -1,23 +1,20 @@
 {
-  "name": "jss",
+  "name": "jcss",
   "description": "JS-driven css framework",
   "version": "0.3.1",
   "author": "Andrey Yamanov <tenphi@gmail.com>",
-  "homepage": "http://github.com/Tenphi/jquery-jss",
+  "homepage": "http://github.com/Tenphi/jcss",
   "contributors": [ 
     { "name": "Andrey Yamanov", "email": "tenphi@gmail.com" }
   ],
   "dependencies": {
-    "jquery": "*"
-  },
-  "devDependencies": {
-    
+    "jQuery": "*"
   },
   "keywords": ["framework", "css"],
   "repository": {
     "type": "git",
-    "url": "git://github.com/Tenphi/jquery-jss"
+    "url": "git://github.com/Tenphi/jcss"
   },
-  "main": "./lib/jss",
+  "main": "./jcss",
   "engines": { "node": ">= 0.4.1" }
 }
