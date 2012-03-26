@@ -17,17 +17,17 @@ Add your styles to application:
 ```javascript
 /* app.js */
 var app = require('express').createServer();
-var jss = require('jss');
+var jcss = require('jcss');
 var styles = require('./styles');
 /* ... */
 app.configure('development', function() {
     app.get('/styles.css', function(req, res) {
-        res.send(jss.render(styles)); // full css
+        res.send(jcss.render(styles)); // full css
     });
 });
 app.configure('production', function() {
     app.get('/styles.css', function(req, res) {
-        res.send(jss.render(styles, true)); // minified
+        res.send(jcss.render(styles, true)); // minified
     });
 });
 app.listen(80);
@@ -89,10 +89,10 @@ module.exports = {
 
 ```javascript
 /* app.js */
-var jss = require('jss');
-jss.mixin('borderRadius', function(value) {
+var jcss = require('jcss');
+jcss.mixin('borderRadius', function(value) {
     /* auto join */
-    return jss.join({borderRadius: value}, ['Moz', 'Webkit']);
+    return jcss.join({borderRadius: value}, ['Moz', 'Webkit']);
     /* or manual */
     return {
         borderRadius: value,
@@ -121,7 +121,7 @@ module.exports = {
 }
 ```
 
-### Use JSS with Node-Color - https://github.com/Tenphi/node-color
+### Use JCSS with Node-Color - https://github.com/Tenphi/node-color
 
 ```javascript
 var color = require('color');
