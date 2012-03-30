@@ -1,29 +1,78 @@
 /*!
-* jQuery JCSS plugin
+* JCSS
 * Copyright(c) 2012 Andrey Yamanov <tenphi@gmail.com>
 * MIT Licensed
-* @version 0.3.1
+* @version 0.4.0
 */
 
 (function() {
     
 
-var init = (function($) {
+var init = (function() {
     
-    /* Check jQuery Version */
-    if (!$) throw {message: 'jQuery not found.'};
-    
-    var isArray = $.isArray,
-        map = $.map,
-        isNumeric = $.isNumeric,
-        isPlainObject = $.isPlainObject,
-        extend = $.extend,
+    var isArray = Array.isArray || function(arr) {
+            return arr instanceof Array;
+        },
+        map = function(elems, callback, arg) {
+            var ret = [];
+            if (isArray(elems)) {
+                for(var i = 0, len = elems.length; i < len; i++) {
+                    var value = callback(elems[i], i, arg);
+                    if (value != null) {
+                        ret.push(value);
+                    }
+                }
+            } else if (isPlainObject(elems)) {
+                for (var name in elems) {
+                    var value = callback(elems[name], name, arg);
+                    if (value != null) {
+                        ret.push(value);
+                    }
+                }
+            } else {
+                return elems;
+            }
+            
+            return ret.concat.apply([], ret);
+        },
+        isNumeric = function(num) {
+            return typeof(num) === 'number';
+        },
+        isPlainObject = function( obj ) {
+            if ( !obj || typeof(obj) !== "object" || obj.nodeType || obj === window ) {
+                return false;
+            }
+
+            try {
+                if ( obj.constructor &&
+                    !Object.hasOwnProperty.call(obj, "constructor") &&
+                    !Object.hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf") ) {
+                    return false;
+                }
+            } catch ( e ) {
+                return false;
+            }
+            
+            var key;
+            for ( key in obj ) {}
+
+            return key === undefined || Object.hasOwnProperty.call( obj, key );
+        },
+        clone = function clone(obj){
+            if(obj == null || typeof(obj) != 'object')
+                return obj;
+
+            var temp = obj.constructor();
+
+            for(var key in obj)
+                temp[key] = clone(obj[key]);
+            return temp;
+        },
         isString = function(value) {
             return typeof(value) === 'string';
         };
 	
     var jcss = {
-        _jQuery: $,
         
         /* active or not */
         status: true,
@@ -70,8 +119,8 @@ var init = (function($) {
             } else {
                 offset = '';
             }
-
-            css = this.normalize(extend(true, {}, css));
+            
+            css = this.normalize(clone(css));
             for (sel in css) {
                 fsel = namespace + sel;
                 styles = css[sel];
@@ -159,11 +208,11 @@ var init = (function($) {
                         newstyles = {};
                         temp2 = selector.replace(/\|/g, ',').split(',');
                         fselector = [];
-                        fselector = temp2.map(function(sel) {
+                        fselector = map(temp2, function(sel) {
                             return sel + temp.join(',' + sel);
                         });
                         fselector = fselector.join(',');
-                        newstyles[fselector] = extend(true, {}, styles[selector][style]);
+                        newstyles[fselector] = clone(styles[selector][style]);
                         newstyles = this.normalize(newstyles);
                         for (sel in newstyles) {
                             if (!isPlainObject(styles[sel])) styles[sel] = {};
@@ -236,6 +285,10 @@ var init = (function($) {
         },
         
         hook: function(name, handler) {
+            if (!jcss._jQuery) {
+                return;
+            }
+            var $ = jcss._jQuery;
             if (!$.cssHooks[name]) $.cssHooks[name] = {};
             $.cssHooks[name] = {
                 set: function(elem, value) {
@@ -273,8 +326,6 @@ var init = (function($) {
         
     };
     
-    $.jcss = jcss;
-    
     /* mixins */
     
     var list = ['width', 'height', 'minWidth', 'minHeight',
@@ -285,13 +336,27 @@ var init = (function($) {
         'left', 'top', 'right', 'bottom', 'borderRadius'
     ];
     
-    $.each(list, function(i, name) {
-        jcss.mixin(name, function(value) {
-            var styles = {};
-            styles[name] = jcss.px(value);
-            return styles;
-        });
-    });
+    for (var i = 0, len = list.length; i < len; i++) {
+        jcss.mixin(list[i], (function(name) {
+            return function(value) {
+                var styles = {};
+                styles[name] = jcss.px(value);
+                return styles;
+            }
+        })(list[i]));
+    }
+    
+    /* Setup plugin for jQuery */
+    
+    jcss.jQuery = function($) {
+        if (!$) {
+            return jcss._jQuery;
+        } else {
+            jcss._jQuery = $;
+            /* support for $.cssHooks() added! */
+        }
+        return jcss;
+    };
     
     return jcss;
     
@@ -300,19 +365,10 @@ var init = (function($) {
 try {
 	/* nodejs stuff */
     if (!module.exports) throw '';
-    var $ = require('jQuery');
-    var jcss = init($);
-    jcss.jQuery = function jQuery($) {
-        if (!$) {
-            return jcss._jQuery;
-        }
-        var jcss = init($);
-        jcss.jQuery = jQuery;
-        return jcss;
-    }
+    var jcss = init();
 	module.exports = jcss;
 } catch(e) {
-	init(jQuery);
+	window.jcss = init();
 }
 
 })();
