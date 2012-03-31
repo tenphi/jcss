@@ -1,5 +1,5 @@
 ### Install via NPM
-Install *jcss* package via npm:
+Install **jcss** package via npm:
 
 ```bash
 npm install jcss

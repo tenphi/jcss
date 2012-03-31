@@ -1,7 +1,7 @@
 {
   "name": "jcss",
   "description": "JS-driven css framework",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": "Andrey Yamanov <tenphi@gmail.com>",
   "homepage": "http://github.com/Tenphi/jcss",
   "contributors": [ 

@@ -2,7 +2,7 @@
 * JCSS
 * Copyright(c) 2012 Andrey Yamanov <tenphi@gmail.com>
 * MIT Licensed
-* @version 0.4.1
+* @version 0.4.2
 */
 
 (function() {
