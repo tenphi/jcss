@@ -1,10 +1,10 @@
-var jss = require('../lib/jss');
+var jcss = require('../jcss');
 var styles = require('./styles');
 
-jss.mixin('borderRadius', function(value) {
-    return jss.join({borderRadius: value}, ['Moz', 'Webkit']);
+jcss.mixin('borderRadius', function(value) {
+    return jcss.join({borderRadius: value}, ['Moz', 'Webkit']);
 });
 
-console.log(jss.render(styles));
+console.log(jcss.render(styles));
 
-console.log(jss.render(styles, true));
+console.log(jcss.render(styles, true));
