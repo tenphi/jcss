@@ -2,7 +2,7 @@
 * JCSS
 * Copyright(c) 2012 Andrey Yamanov <tenphi@gmail.com>
 * MIT Licensed
-* @version 0.4.0
+* @version 0.4.1
 */
 
 (function() {
@@ -14,17 +14,17 @@ var init = (function() {
             return arr instanceof Array;
         },
         map = function(elems, callback, arg) {
-            var ret = [];
+            var ret = [], value;
             if (isArray(elems)) {
                 for(var i = 0, len = elems.length; i < len; i++) {
-                    var value = callback(elems[i], i, arg);
+                    value = callback(elems[i], i, arg);
                     if (value != null) {
                         ret.push(value);
                     }
                 }
             } else if (isPlainObject(elems)) {
                 for (var name in elems) {
-                    var value = callback(elems[name], name, arg);
+                    value = callback(elems[name], name, arg);
                     if (value != null) {
                         ret.push(value);
                     }
@@ -39,7 +39,7 @@ var init = (function() {
             return typeof(num) === 'number';
         },
         isPlainObject = function( obj ) {
-            if ( !obj || typeof(obj) !== "object" || obj.nodeType || obj === window ) {
+            if ( !obj || typeof(obj) !== "object" || obj.nodeType) {
                 return false;
             }
 
@@ -355,6 +355,9 @@ var init = (function() {
             jcss._jQuery = $;
             /* support for $.cssHooks() added! */
         }
+        
+        $.jcss = jcss;
+        
         return jcss;
     };
     
@@ -362,12 +365,11 @@ var init = (function() {
     
 });
 
-try {
+if ((typeof module || typeof module.exports) !== 'undefined') {
 	/* nodejs stuff */
-    if (!module.exports) throw '';
     var jcss = init();
 	module.exports = jcss;
-} catch(e) {
+} else {
 	window.jcss = init();
 }
 

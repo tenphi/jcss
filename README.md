@@ -1,3 +1,10 @@
+### Install via NPM
+Install *jcss* package via npm:
+
+```bash
+npm install jcss
+```
+
 ### Wrote your styles in javascript!
 Set your style sheets as module of your application!
 
@@ -104,7 +111,7 @@ jcss.mixin('borderRadius', function(value) {
 /* styles.js */
 module.exports = {
     '.rounded': {
-        borderRadius: '5px'
+        borderRadius: 5 // 5px
     }
 }
 ```
@@ -115,7 +122,7 @@ module.exports = {
 module.exports = {
     '@media (min-width: 600px)': {
         '#hello': {
-            width: '980px'
+            width: 980 // 980px
         }
     }
 }
