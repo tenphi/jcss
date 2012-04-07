@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>JCSS by tenphi</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>JCSS</h1>
+        <p>Dymanic stylesheet language based on native Javascript</p>
+        <p class="view"><a href="https://github.com/tenphi/jcss">View the Project on GitHub <small>tenphi/jcss</small></a></p>
+        <ul>
+          <li><a href="https://github.com/tenphi/jcss/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/tenphi/jcss/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/tenphi/jcss">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>Install via NPM</h3>
+
+<p>Install <strong>jcss</strong> package via npm:</p>
+
+<div class="highlight">
+<pre>npm install jcss
+</pre>
+</div>
+
+
+<h3>Wrote your styles in javascript!</h3>
+
+<p>Set your style sheets as module of your application!</p>
+
+<div class="highlight">
+<pre><span class="cm">/* styles.js */</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'#mydiv'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">color</span><span class="o">:</span> <span class="s1">'#333'</span><span class="p">,</span>
+        <span class="nx">font</span><span class="o">:</span> <span class="s1">'13px/18px Helvetica'</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<h3>Example using with Express</h3>
+
+<p>Add your styles to application:</p>
+
+<div class="highlight">
+<pre><span class="cm">/* app.js */</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'express'</span><span class="p">).</span><span class="nx">createServer</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">jcss</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'jcss'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">styles</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./styles'</span><span class="p">);</span>
+<span class="cm">/* ... */</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="s1">'development'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/styles.css'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">styles</span><span class="p">));</span> <span class="c1">// full css</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="s1">'production'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/styles.css'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">styles</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span> <span class="c1">// minified</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">80</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p>Check <em>styles.css</em> in your browser.</p>
+
+<div class="highlight">
+<pre><span class="c">/* http://localhost/styles.css */</span>
+<span class="nf">#mydiv</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="m">#333</span><span class="p">;</span>
+    <span class="k">font</span><span class="o">:</span> <span class="m">13px</span><span class="o">/</span><span class="m">18px</span> <span class="n">Helvetica</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<h3>Use namespaces and splits</h3>
+
+<div class="highlight">
+<pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'#mydiv'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">color</span><span class="o">:</span> <span class="s1">'#333'</span><span class="p">,</span>
+        <span class="s1">' div'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// #mydiv div</span>
+            <span class="nx">color</span><span class="o">:</span> <span class="s1">'#666'</span>
+        <span class="p">},</span>
+        <span class="s1">'.highlight'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// #mydiv.highlight</span>
+            <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">'#fff'</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s1">'.button-|.big-button-'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">'red'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// .button-red, .big-button-red</span>
+            <span class="nx">color</span><span class="o">:</span> <span class="s1">'red'</span>
+        <span class="p">},</span>
+        <span class="s1">'blue'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// .button-blue, .big-button-blue</span>
+            <span class="nx">color</span><span class="o">:</span> <span class="s1">'blue'</span>
+        <span class="p">},</span>
+        <span class="s1">'red|blue'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// .button-red, .button-blue, .big-button-red, .big-button-blue</span>
+            <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">'#fff'</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<h3>Multiple styles</h3>
+
+<p>You can set many values of one style:</p>
+
+<div class="highlight">
+<pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'.button'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">background</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s1">'linear-gradient(top, #ffffff, #e6e6e6)'</span><span class="p">,</span>
+            <span class="s1">'-moz-linear-gradient(top, #ffffff, #e6e6e6)'</span><span class="p">,</span>
+            <span class="s1">'-webkit-linear-gradient(top, #ffffff, #e6e6e6)'</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<h3>Create mixins</h3>
+
+<div class="highlight">
+<pre><span class="cm">/* app.js */</span>
+<span class="kd">var</span> <span class="nx">jcss</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'jcss'</span><span class="p">);</span>
+<span class="nx">jcss</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="s1">'borderRadius'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* auto join */</span>
+    <span class="k">return</span> <span class="nx">jcss</span><span class="p">.</span><span class="nx">join</span><span class="p">({</span><span class="nx">borderRadius</span><span class="o">:</span> <span class="nx">value</span><span class="p">},</span> <span class="p">[</span><span class="s1">'Moz'</span><span class="p">,</span> <span class="s1">'Webkit'</span><span class="p">]);</span>
+    <span class="cm">/* or manual */</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">borderRadius</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
+        <span class="nx">MozBorderRadius</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
+        <span class="nx">WebkitBorderRadius</span><span class="o">:</span> <span class="nx">value</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="cm">/* styles.js */</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'.rounded'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">borderRadius</span><span class="o">:</span> <span class="mi">5</span> <span class="c1">// 5px</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<h3>Media Types</h3>
+
+<div class="highlight">
+<pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'@media (min-width: 600px)'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">'#hello'</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">width</span><span class="o">:</span> <span class="mi">980</span> <span class="c1">// 980px</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/tenphi">tenphi</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+  </body>
+</html>
