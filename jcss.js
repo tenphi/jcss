@@ -2,7 +2,7 @@
 * JCSS
 * Copyright(c) 2012 Andrey Yamanov <tenphi@gmail.com>
 * MIT Licensed
-* @version 0.4.2
+* @version 0.4.3
 */
 
 (function() {
@@ -104,7 +104,7 @@ var init = (function() {
             }, dec, sel, fsel, styles, style, value, values, fixedStyle, i, out = '';
 
             if (!isPlainObject(css)) {
-                throw {message: 'jcss: wrong input data'};
+                throw 'jcss: wrong input data - ' + typeof(css);
             }
             if (!namespace) {
                 namespace = '';
@@ -365,8 +365,7 @@ var init = (function() {
     
 });
 
-if ((typeof module || typeof module.exports) !== 'undefined') {
-	/* nodejs stuff */
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     var jcss = init();
 	module.exports = jcss;
 } else {
