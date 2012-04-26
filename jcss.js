@@ -2,7 +2,7 @@
 * JCSS
 * Copyright(c) 2012 Andrey Yamanov <tenphi@gmail.com>
 * MIT Licensed
-* @version 0.4.3
+* @version 0.4.4
 */
 
 (function() {
@@ -294,26 +294,26 @@ var init = (function() {
                 set: function(elem, value) {
                     var styles = handler(value);
                     var elm = $(elem);
-                    if (!elm.data('styles')) elm.data('styles', {});
-                    styles = elm.data('styles');
-                    styles[name] = value;
-                    elm.data('styles', styles);
+                    if (!elm.data('jcss'))
+                    	elm.data('jcss', {});
+                    var stored = elm.data('jcss');
+                    stored[name] = value;
+                    elm.data('jcss', stored);
                     for (var style in styles) {
-                        if (style in elem.style) {
-                            var values = isArray(styles[style]) ? styles[style] : [styles[style]];
-                            for (var i=0; i < values.length; i++) {
-                                if (isString(values[i]) || isNumeric(values[i])) {
-                                    try {
-                                        elem.style[style] = values[i];
-                                    } catch(e) {}
-                                }
+                        var values = isArray(styles[style]) ? styles[style] : [styles[style]];
+                        for (var i=0; i < values.length; i++) {
+                            if (isString(values[i]) || isNumeric(values[i])) {
+                                try {
+                                	console.log(elem, style, values[i]);
+                                    elem.style[style] = values[i];
+                                } catch(e) {}
                             }
                         }
                     }
                 },
                 get: function(elem) {
                     var elm = $(elem);
-                    var styles = elm.data('styles');
+                    var styles = elm.data('jcss');
                     if (styles === undefined) return undefined;
                     if (styles[name]) {
                         return styles[name];
