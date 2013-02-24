@@ -1,20 +1,22 @@
 {
-  "name": "jcss",
-  "description": "Dymanic stylesheet language based on native Javascript",
-  "version": "0.4.4",
-  "author": "Andrey Yamanov <tenphi@gmail.com>",
-  "homepage": "http://tenphi.github.com/jcss",
-  "contributors": [ 
-    { "name": "Andrey Yamanov", "email": "tenphi@gmail.com" }
-  ],
-  "dependencies": {},
-  "keywords": ["framework", "css"],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/tenphi/jcss"
-  },
-  "main": "./jcss",
-  "engines": { 
-      "node": ">= 0.4.1"
-  }
+    "author": "Andrey Yamanov <tenphi@gmail.com> (http://tenphi.me)",
+    "name": "jcss",
+    "description": "CSS Generator",
+    "version": "0.5.0",
+    "homepage": "http://github.com/tenphi/jcss",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/tenphi/jcss.git"
+    },
+    "main": "./jcss.js",
+    "keywords": ["css", "engine", "render"],
+    "dependencies": {},
+    "devDependencies": {
+        "nodeunit": "0.7.x"
+    },
+    "scripts": {
+        "test": "nodeunit ./test.js"
+    },
+    "optionalDependencies": {},
+    "engine": "node >= 0.4.1"
 }

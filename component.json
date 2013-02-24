@@ -1,0 +1,6 @@
+{
+    "name": "jcss",
+    "version": "0.5.0",
+    "main": ["./jcss.js"],
+    "dependencies": {}
+}

@@ -1,375 +1,333 @@
-/*!
-* JCSS
-* Copyright(c) 2012 Andrey Yamanov <tenphi@gmail.com>
-* MIT Licensed
-* @version 0.4.4
+/*
+    JCSS by Andrey Yamanov <tenphi@gmail.com>
+
+    Licensed under MIT
 */
 
-(function() {
-    
+(function(jcss, undefined) {
 
-var init = (function() {
-    
-    var isArray = Array.isArray || function(arr) {
-            return arr instanceof Array;
-        },
-        map = function(elems, callback, arg) {
-            var ret = [], value;
-            if (isArray(elems)) {
-                for(var i = 0, len = elems.length; i < len; i++) {
-                    value = callback(elems[i], i, arg);
-                    if (value != null) {
-                        ret.push(value);
-                    }
-                }
-            } else if (isPlainObject(elems)) {
-                for (var name in elems) {
-                    value = callback(elems[name], name, arg);
-                    if (value != null) {
-                        ret.push(value);
-                    }
-                }
-            } else {
-                return elems;
-            }
-            
-            return ret.concat.apply([], ret);
-        },
-        isNumeric = function(num) {
-            return typeof(num) === 'number';
-        },
-        isPlainObject = function( obj ) {
-            if ( !obj || typeof(obj) !== "object" || obj.nodeType) {
-                return false;
-            }
+    /* decorators */
 
-            try {
-                if ( obj.constructor &&
-                    !Object.hasOwnProperty.call(obj, "constructor") &&
-                    !Object.hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf") ) {
-                    return false;
-                }
-            } catch ( e ) {
-                return false;
-            }
-            
-            var key;
-            for ( key in obj ) {}
+    var charOpen = '{', charClose = '}', charColon = ':', charNl = '\r\n', charNl2 = '\r\n\r\n', charDel = ';', charSpace = ' ', charTab = '  ';
 
-            return key === undefined || Object.hasOwnProperty.call( obj, key );
-        },
-        clone = function clone(obj){
-            if(obj == null || typeof(obj) != 'object')
-                return obj;
+    /* utils */
 
-            var temp = obj.constructor();
+    var utils = jcss.utils = {};
 
-            for(var key in obj)
-                temp[key] = clone(obj[key]);
-            return temp;
-        },
-        isString = function(value) {
-            return typeof(value) === 'string';
+    var type = utils.type = (function() {
+        var classToType, name, i, len, ref;
+        classToType = {};
+        ref = 'Boolean Number String Function Array Date Regexp Undefined Null'.split(' ');
+        for (i = 0, len = ref.length; i < len; i++) {
+            name = ref[i];
+            classToType['[object ' + name + ']'] = name.toLowerCase();
+        }
+        return function type (obj) {
+            return classToType[Object.prototype.toString.call(obj)] || 'object';
         };
-	
-    var jcss = {
-        
-        /* active or not */
-        status: true,
-        
-        on: function() {
-            this.status = true;
-        },
-        
-        off: function() {
-            this.status = false;
-        },
-        
-        render: function (css, minified, namespace, offset) {
-            var decoration = {
-                min: {
-                    open: '{',
-                    nl: '',
-                    mid: ':',
-                    close: '}',
-                    tab: ''
-                },
-                full: {
-                    open: ' {',
-                    nl: "\r\n",
-                    mid: ': ',
-                    close: '}',
-                    tab: '  '
-                }
-            }, dec, sel, fsel, styles, style, value, values, fixedStyle, i, out = '';
+    })();
 
-            if (!isPlainObject(css)) {
-                throw 'jcss: wrong input data - ' + typeof(css);
-            }
-            if (!namespace) {
-                namespace = '';
-            }
-            if (minified) {
-                dec = decoration.min;
-            } else {
-                dec = decoration.full;
-            }
-            if (offset) {
-                offset = dec.tab;
-            } else {
-                offset = '';
-            }
-            
-            css = this.normalize(clone(css));
-            for (sel in css) {
-                fsel = namespace + sel;
-                styles = css[sel];
-                if (!offset && !namespace && sel.substr(0, 6) === '@media') {
-                    out += sel + dec.open + dec.nl;
-                    out += this.render(css[sel], minified, '', true);
-                    out += dec.close + dec.nl;
-                    continue;
-                }
-                if (!isPlainObject(styles)) {
-                    continue;
-                }
-                out += offset + fsel + dec.open + dec.nl;
-                for (style in styles) {
-                    fixedStyle = style.replace(/[A-Z]/g, fixName);
-                    values = styles[style];
-                    if (!isArray(values)) {
-                        values = [values];
-                    }
-                    values.forEach(handleStyle);
-                }
-                out += offset + dec.close + dec.nl;
-            }
-            function fixName(s) {
-                return '-' + s.toLowerCase();
-            }
-            function handleStyle(value) {
-                out += offset + dec.tab + fixedStyle + dec.mid + value + ';' + dec.nl;
-            }
-            
-            return out;
-        },
-        
-        normalize: function(styles) {
-            var newstyles, selector, sel, options, style, style2, name, i, temp, temp2, fselector, flag;
-            for (selector in styles) {
-                if (isPlainObject(styles[selector][''])) {
-                    for (style in styles[selector]['']) {
-                        if (isPlainObject(styles[selector][style])) {
-                            continue;
-                        }
-                        styles[selector][style] = styles[selector][''][style];
-                    }
-                    delete styles[selector][''];
-                }
-            }
-            for (selector in styles) {
-                if (selector.substr(0, 6) == '@media') {
-                    styles[selector] = this.normalize(styles[selector]);
-                    continue;
-                }
-                temp = selector.replace(/\|/g, ',').split(',');
-                if (!isPlainObject(styles[selector])) styles[selector] = {};
-                for (style in styles[selector]) {
-                    if (this.mixins[style] instanceof Function) {
-                        options = styles[selector][style];
-                        if (!isArray(options)) {
-                            options = [options];
-                        }
-                        for (i = 0; i < options.length; i++) {
-                            newstyles = this.mixins[style](options[i]);
-                            if (!isPlainObject(newstyles)) {
-                                continue;
-                            }
-                            if (!newstyles[style]) {
-                                delete styles[selector][style];
-                            } else {
-                                styles[selector][style] = newstyles[style];
-                                delete newstyles[style];
-                            }
-                            for (name in newstyles) {
-                                if (styles[selector][name]) {
-                                    if (isArray(styles[selector][name])) {
-                                        styles[selector][name].push(newstyles[name]);
-                                    } else if (styles[selector][name] != newstyles[name]) {
-                                        styles[selector][name] = [styles[selector][name], newstyles[name]];
-                                    }
-                                } else {
-                                    styles[selector][name] = newstyles[name];
-                                }
-                            }
-                        }
-                    } else if (isPlainObject(styles[selector][style])) {
-                        temp = style.replace(/\|/g, ',').split(',');
-                        newstyles = {};
-                        temp2 = selector.replace(/\|/g, ',').split(',');
-                        fselector = [];
-                        fselector = map(temp2, function(sel) {
-                            return sel + temp.join(',' + sel);
-                        });
-                        fselector = fselector.join(',');
-                        newstyles[fselector] = clone(styles[selector][style]);
-                        newstyles = this.normalize(newstyles);
-                        for (sel in newstyles) {
-                            if (!isPlainObject(styles[sel])) styles[sel] = {};
-                            for (style2 in newstyles[sel]) {
-                                styles[sel][style2] = newstyles[sel][style2];
-                            }
-                        }
-                        delete styles[selector][style];
-                    } else if (typeof(styles[selector][style]) == 'object') {
-                        styles[selector][style] = '' + styles[selector][style];
-                    } else if (!isArray(styles[selector][style]) && typeof(styles[selector][style]) != 'string' 
-                        && typeof(styles[selector][style]) != 'number') {
-                        delete styles[selector][style];
-                    }
-                }
-            }
-            /* delete empty selectors */
-            for (selector in styles) {
-                flag = true;
-                for (style in styles[selector]) {
-                    flag = false;
-                }
-                if (flag) delete styles[selector];
-            }
-            return styles;
-        },
-        
-        mixins: {},
-        
-        mixin: function(name, mixin) {
-            if (!mixin) {
-                return this.mixins[name];
-            }
-            if (!(mixin instanceof Function)) {
-                return null;
-            }
-            this.mixins[name] = mixin;
-            this.hook(name, mixin);
-            return this;
-        },
-        
-        join: function(styles, prefixes) {
-            var i, name, pname, newstyles = {};
-            if (!prefixes) {
-                return styles;
-            }
-            if (!isArray(prefixes)) {
-                prefixes = [prefixes];
-            }
-            for (name in styles) {
-                pname = name[0].toUpperCase() + name.substr(1, name.length - 1);
-                for (i = 0; i < prefixes.length; i++) {
-                    newstyles[prefixes[i] + pname] = styles[name];
-                }
-                newstyles[name] = styles[name];
-            }
-            return newstyles;
-        },
-        
-        px: function(value) {
-            var temp = (value + '').split(/ +/g);
-            value = map(temp, function(val) {
-                if (Math.round(val).toString() !== 'NaN') {
-                    return val + 'px';
-                } else {
-                    return val;
-                } 
-            });
-            return value.join(' ');
-        },
-        
-        hook: function(name, handler) {
-            if (!jcss._jQuery) {
-                return;
-            }
-            var $ = jcss._jQuery;
-            if (!$.cssHooks[name]) $.cssHooks[name] = {};
-            $.cssHooks[name] = {
-                set: function(elem, value) {
-                    var styles = handler(value);
-                    var elm = $(elem);
-                    if (!elm.data('jcss'))
-                    	elm.data('jcss', {});
-                    var stored = elm.data('jcss');
-                    stored[name] = value;
-                    elm.data('jcss', stored);
-                    for (var style in styles) {
-                        var values = isArray(styles[style]) ? styles[style] : [styles[style]];
-                        for (var i=0; i < values.length; i++) {
-                            if (isString(values[i]) || isNumeric(values[i])) {
-                                try {
-                                	console.log(elem, style, values[i]);
-                                    elem.style[style] = values[i];
-                                } catch(e) {}
-                            }
-                        }
-                    }
-                },
-                get: function(elem) {
-                    var elm = $(elem);
-                    var styles = elm.data('jcss');
-                    if (styles === undefined) return undefined;
-                    if (styles[name]) {
-                        return styles[name];
-                    } else {
-                        return undefined;
-                    }
-                }
-            };
-        }
-        
+    var isArray = utils.isArray = function isArray (arr) {
+        return type(arr) === 'array';
     };
-    
-    /* mixins */
-    
-    var list = ['width', 'height', 'minWidth', 'minHeight',
-        'border', 'borderWidth', 'outline', 'outlineWidth',
-        'margin', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft',
-        'padding', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
-        'textIndent', 'fontSize', 'lineHeight',
-        'left', 'top', 'right', 'bottom', 'borderRadius'
-    ];
-    
-    for (var i = 0, len = list.length; i < len; i++) {
-        jcss.mixin(list[i], (function(name) {
-            return function(value) {
-                var styles = {};
-                styles[name] = jcss.px(value);
-                return styles;
+
+    var isObject = utils.isObject = function isObject (obj) {
+        return type(obj) === 'object';
+    };
+
+    var isFunction = utils.isFunction = function isFunction (func) {
+        return type(func) === 'function';
+    };
+
+    var isString = utils.isString = function isString (str) {
+        return type(str) === 'string';
+    };
+
+    var isBoolean = utils.isBoolean = function isBoolean (bool) {
+        return type(bool) === 'boolean';
+    };
+
+    var isNumber = utils.isNumber = function isNumber (bool) {
+        return type(bool) === 'number';
+    };
+
+    var isNaN = utils.isNaN = function isNaN (num) {
+        return num !== num;
+    };
+
+    var extend = utils.extend = function extend (obj, extObj) {
+        if (arguments.length > 2) {
+            for (var a = 1; a < arguments.length; a++) {
+                extend(obj, arguments[a]);
             }
-        })(list[i]));
-    }
-    
-    /* Setup plugin for jQuery */
-    
-    jcss.jQuery = function($) {
-        if (!$) {
-            return jcss._jQuery;
         } else {
-            jcss._jQuery = $;
-            /* support for $.cssHooks() added! */
+            for (var i in extObj) {
+                if (isPlainObject(extObj[i])) {
+                    obj[i] = extend({}, extObj[i]);
+                } else {
+                    obj[i] = extObj[i];
+                }
+            }
         }
-        
-        $.jcss = jcss;
-        
-        return jcss;
+        return obj;
     };
-    
-    return jcss;
-    
-});
 
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    var jcss = init();
-	module.exports = jcss;
-} else {
-	window.jcss = init();
-}
+    var isPlainObject = utils.isPlainObject = function isPlainObject (obj) {
+        if (!obj || typeof(obj) !== "object" || obj.nodeType) {
+            return false;
+        }
 
-})();
+        try {
+            if (obj.constructor &&
+                !Object.hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf")) {
+                return false;
+            }
+        } catch (e) {
+            return false;
+        }
+
+        return true;
+    };
+
+    var toString = utils.toString = function toString (val) {
+        return (isFunction(val.toString) && val.toString()) || Object.prototype.toString.call(val);
+    };
+
+    var cleanObject = utils.cleanObject = function cleanObject (obj) {
+        var name, empty = true, check;
+        for (name in obj) {
+            if (isPlainObject(obj[name])) {
+                check = cleanObject(obj[name]);
+                if (check) {
+                    delete obj[name];
+                }
+            } else if (obj[name] === undefined) {
+                delete obj[name];
+            }
+            empty = false;
+        }
+        return empty;
+    };
+
+    /* render utils */
+
+    var handleStyleName = function handleStyleName (name) {
+        return name.replace(/[A-Z]/g, function(s) {
+            return '-' + s.toLowerCase();
+        });
+    };
+    var handleSelector = function handleSelector (name) {
+        return name.replace(/\s+$/, '');
+    };
+
+    var renderUtils = jcss.renderUtils = {
+        handleStyleName: handleStyleName,
+        handleSelector: handleSelector
+    };
+
+    /* mixins  */
+
+    var mixins = jcss.mixins = {
+        size: function size (val) {
+            val = toString(val);
+            val = val.split(/\s+/);
+            if (!val.length) return;
+            return {
+                width: val[0],
+                height: val[1] === undefined ? val[0] : val[1]
+            }
+        }
+    };
+
+    var handleMixins = function handleMixins (styles, ignore) {
+        var name, values, val, ret, out = {}, i, temp, mixins = jcss.mixins;
+        for (name in styles) {
+            values = styles[name];
+            if (!isArray(values)) {
+                values = [values];
+            }
+            if (mixins[name] && name !== ignore) {
+                for (i = 0; i < values.length; i++) {
+                    val = values[i];
+                    ret = mixins[name](val) || {};
+                    if (!isPlainObject(ret)) {
+                        temp = ret;
+                        ret = {};
+                        ret[name] = temp;
+                    }
+                    ret = handleMixins(ret || {}, name);
+                    cleanObject(ret);
+                    extend(out, ret);
+                }
+            } else {
+                out[name] = values;
+            }
+        }
+        return out;
+    };
+
+    /* normalize */
+
+    var normalize = jcss.normalize = function normalize (css, namespace) {
+        var newcss = {}, selector, styles, style, nsel, tmp, newstyles, val, values, i;
+        namespace = namespace || '';
+        for (selector in css) {
+            styles = css[selector];
+            if (selector.charAt(0) === '@') {
+                if (!newcss[selector]) {
+                    newcss[selector] = {};
+                }
+                newstyles = {};
+                newstyles[namespace] = styles;
+                extend(newcss[selector], normalize(newstyles));
+                continue;
+            }
+            tmp = selector.replace(/\|/g, ',').split(',');
+            if (tmp.length > 1) {
+                for (i = 0; i < tmp.length; i++) {
+                    nsel = tmp[i];
+                    if (!newcss[namespace + nsel]) {
+                        newcss[namespace + nsel] = [];
+                    }
+                    newstyles = {};
+                    newstyles[handleSelector(nsel)] = extend({}, styles);
+                    extend(newcss, jcss.normalize(newstyles, namespace));
+                }
+                return newcss;
+            } else if (!isPlainObject(newcss[namespace + selector])) {
+                newcss[namespace +selector] = {};
+            }
+            for (style in styles) {
+                val = styles[style];
+                if (isPlainObject(val)) {
+                    newstyles = {};
+                    newstyles[handleSelector(style)] = extend({}, val);
+                    extend(newcss, normalize(newstyles, namespace + selector));
+                } else if (isString(val) || isNumber(val)) {
+                    styles[style] = [val];
+                } else if (isObject(val) && isFunction(val.toString)) {
+                    styles[style] = [val.toString()];
+                }
+                if (!isArray(styles[style])) {
+                    continue;
+                }
+                newcss[namespace + handleSelector(selector)][style] = styles[style];
+            }
+        }
+
+        return newcss;
+    };
+
+    /* render */
+
+    var render = jcss.render = function render (css, min, tab) {
+        var out = '', styles, sel, offset, strTab, style, val, fstyle, values, i;
+
+        if (!isPlainObject(css)) {
+            throw 'jcss: wrong input data - ' + typeof(css);
+        }
+
+        tab = tab || 0;
+        if (tab) {
+            strTab = Array(tab+1).join(charTab);
+        } else {
+            strTab = '';
+        }
+
+        css = normalize(css);
+
+        cleanObject(css);
+
+        for (sel in css) {
+            styles = css[sel];
+            if (sel.charAt(0) === '@') {
+                if (min) {
+                    out += strTab + sel + charOpen + render(styles, min, tab + 1) + charClose;
+                } else {
+                    out += strTab + sel + charSpace + charOpen + charNl + charNl + render(styles, min, tab + 1) + strTab + charClose + charNl2;
+                }
+            }
+        }
+        for (sel in css) {
+            styles = css[sel];
+            if (sel.charAt(0) === '@')
+                continue;
+            if (min) {
+                out += sel + charOpen;
+            } else {
+                out += strTab + sel + charSpace + charOpen + charNl;
+            }
+            styles = handleMixins(styles);
+            for (style in styles) {
+                val = styles[style];
+                fstyle = handleStyleName(style);
+                values = Array.isArray(val) ? val : [val];
+                if (!values.length)
+                    continue;
+                for (i = 0; i < values.length; i++) {
+                    val = values[i];
+                    if (min) {
+                        out += fstyle + charColon + val + charDel;
+                    } else {
+                        out += strTab + charTab + fstyle + charColon + charSpace + val + charDel + charNl;
+                    }
+                }
+            }
+            if (min) {
+                out += charClose;
+            } else {
+                out += strTab + charClose + charNl2;
+            }
+        }
+
+        return out;
+    };
+
+    /* Inject */
+
+    if (typeof(window) !== 'undefined') {
+        jcss.inject = function inject (name, css, min, tab) {
+            if (!isString(name) || !(name = name.trim())) {
+                throw new Error('jcss: wrong style name');
+            }
+            if (isPlainObject(css)) {
+                css = render(css, min, tab);
+            }
+            if (!isString(css)) {
+                throw new Error('jcss: wrong css data');
+            }
+            var head = document.getElementsByTagName('head')[0],
+                style = document.createElement('style');
+
+            jcss.remove(name);
+            style.type = 'text/css';
+            style.setAttribute('data-jcss', name);
+            if (style.styleSheet){
+                style.styleSheet.cssText = css;
+            } else {
+                style.appendChild(document.createTextNode(css));
+            }
+            head.appendChild(style);
+            return this;
+        };
+        jcss.remove = function remove (name) {
+            if (!isString(name) || !(name = name.trim())) {
+                throw new Error('jcss: wrong style name');
+            }
+            var head = document.getElementsByTagName('head')[0],
+                currentStyle = document.querySelectorAll('style[data-jcss="' + name + '"]', head)[0];
+
+            if (currentStyle) {
+                head.removeChild(currentStyle);
+            }
+            return this;
+        };
+    }
+
+    /* RequireJS Define */
+
+    if (typeof(define) === "function") {
+        define( "jcss", [], function () { return jcss; } );
+    };
+
+})(typeof(exports) === 'undefined' ? this.jcss = {} : exports, undefined);
