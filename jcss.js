@@ -1,8 +1,8 @@
 /*
-    JCSS by Andrey Yamanov <tenphi@gmail.com>
+ JCSS by Andrey Yamanov <tenphi@gmail.com>
 
-    Licensed under MIT
-*/
+ Licensed under MIT
+ */
 
 (function(jcss, undefined) {
 
@@ -116,13 +116,40 @@
             return '-' + s.toLowerCase();
         });
     };
-    var handleSelector = function handleSelector (name) {
+    var handleName = function handleName (name) {
         return name.replace(/\s+$/, '');
     };
 
     var renderUtils = jcss.renderUtils = {
         handleStyleName: handleStyleName,
-        handleSelector: handleSelector
+        handleName: handleName
+    };
+
+    var isInnerSelector = function isInnerSelector (sel) {
+        var len = sel.length;
+        if (sel.charAt(0) === '&') {
+            return 1;
+        } else if (sel.charAt(len - 1) === '&') {
+            return 2;
+        } else {
+            return 0;
+        }
+    };
+
+    var addNamespace = function addNamespace (sel, namespace, ssel) {
+        var pos = isInnerSelector(sel);
+        var fsel = (ssel && ssel.replace('&', '')) || sel;
+        if (!namespace) {
+            return fsel;
+        }
+        fsel = fsel.replace('&', '');
+        if (pos === 1 || !pos) {
+            return namespace + fsel;
+        } else if (pos === 2) {
+            return fsel + namespace;
+        } else {
+            throw new Error('jcss: wrong inner selector', sel);
+        }
     };
 
     /* mixins  */
@@ -169,10 +196,11 @@
     /* normalize */
 
     var normalize = jcss.normalize = function normalize (css, namespace) {
-        var newcss = {}, selector, styles, style, nsel, tmp, newstyles, val, values, i;
+        var newcss = {}, selector, styles, style, nsel, tmp, newstyles, val, values, i, selns, selns2;
         namespace = namespace || '';
         for (selector in css) {
             styles = css[selector];
+            selns = addNamespace(selector, namespace);
             if (selector.charAt(0) === '@') {
                 if (!newcss[selector]) {
                     newcss[selector] = {};
@@ -186,23 +214,21 @@
             if (tmp.length > 1) {
                 for (i = 0; i < tmp.length; i++) {
                     nsel = tmp[i];
-                    if (!newcss[namespace + nsel]) {
-                        newcss[namespace + nsel] = [];
-                    }
+                    selns2 = addNamespace(selector, namespace, nsel);
                     newstyles = {};
-                    newstyles[handleSelector(nsel)] = extend({}, styles);
-                    extend(newcss, jcss.normalize(newstyles, namespace));
+                    newstyles[selns2] = extend({}, styles);
+                    extend(newcss, jcss.normalize(newstyles));
                 }
-                return newcss;
-            } else if (!isPlainObject(newcss[namespace + selector])) {
-                newcss[namespace +selector] = {};
+                continue;
+            } else if (!isPlainObject(newcss[selns])) {
+                newcss[selns] = {};
             }
             for (style in styles) {
                 val = styles[style];
                 if (isPlainObject(val)) {
                     newstyles = {};
-                    newstyles[handleSelector(style)] = extend({}, val);
-                    extend(newcss, normalize(newstyles, namespace + selector));
+                    newstyles[handleName(style)] = extend({}, val);
+                    extend(newcss, normalize(newstyles, selns));
                 } else if (isString(val) || isNumber(val)) {
                     styles[style] = [val];
                 } else if (isObject(val) && isFunction(val.toString)) {
@@ -211,7 +237,21 @@
                 if (!isArray(styles[style])) {
                     continue;
                 }
-                newcss[namespace + handleSelector(selector)][style] = styles[style];
+                newcss[selns][style] = styles[style];
+            }
+        }
+
+        if (!namespace) {
+            for (selector in newcss) {
+                styles = newcss[selector];
+                nsel = handleName(selector);
+                if (nsel === selector)
+                    continue;
+                if (!newcss[nsel]) {
+                    newcss[nsel] = {};
+                }
+                extend(newcss[nsel], newcss[selector]);
+                delete newcss[selector];
             }
         }
 

@@ -36,7 +36,7 @@ Simple example of css generation
 var css = {
     '.class1|.class2': {
         style1: 'red',
-        ' .class3| .class4': {
+        ' .class3| .class4': { // '& .class3| .class4' as well
             style2: 'blue'
         }
     }

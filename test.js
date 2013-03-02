@@ -30,31 +30,64 @@ module.exports = {
             var result = '.class{style1:value;style2:20;}';
             test.deepEqual(render(css, true), result);
             test.done();
+        },
+        multipleSelector: function (test) {
+            var css = {
+                '.class1': {
+                    style1: 'value'
+                },
+                '.class2': {
+                    style2: 'value'
+                }
+            };
+            var result = '.class1{style1:value;}.class2{style2:value;}';
+            test.deepEqual(render(css, true), result);
+            test.done();
         }
     },
-    hierarchy: function(test) {
-        var css = {
-            '.class1': {
-                style1: 'red',
-                ' .class2': {
-                    style2: 'blue'
+    hierarchy: {
+        leftJoin: function(test) {
+            var css = {
+                '.class1': {
+                    style1: 'red',
+                    '& .class2': {
+                        style2: 'blue'
+                    }
                 }
-            }
-        };
-        var result = '.class1{style1:red;}.class1 .class2{style2:blue;}';
-        test.deepEqual(render(css, true), result);
-        test.done();
+            };
+            var result = '.class1{style1:red;}.class1 .class2{style2:blue;}';
+            test.deepEqual(render(css, true), result);
+            test.done();
+        },
+        rightJoin: function(test) {
+            var css = {
+                '.class1': {
+                    style1: 'red',
+                    '.class2 &': {
+                        style2: 'blue'
+                    }
+                }
+            };
+            var result = '.class1{style1:red;}.class2 .class1{style2:blue;}';
+            test.deepEqual(render(css, true), result);
+            test.done();
+        }
     },
     split: function(test) {
         var css = {
             '.class1|.class2': {
                 style1: 'red',
-                ' .class3| .class4': {
+                '& .class3| .class4': {
                     style2: 'blue'
+                }
+            },
+            '.class3': {
+                '.class1 &': {
+                    style2: 'green'
                 }
             }
         };
-        var result = '.class1{style1:red;}.class1 .class3{style2:blue;}.class1 .class4{style2:blue;}.class2{style1:red;}.class2 .class3{style2:blue;}.class2 .class4{style2:blue;}';
+        var result = '.class1{style1:red;}.class1 .class3{style2:green;}.class1 .class4{style2:blue;}.class2{style1:red;}.class2 .class3{style2:blue;}.class2 .class4{style2:blue;}';
         test.deepEqual(render(css, true), result);
         test.done();
     },
@@ -62,18 +95,18 @@ module.exports = {
         var css = {
             '.class1': {
                 style1: 'red',
-                ' class2': {
+                '& .class2': {
                     style1: 'blue'
                 }
             },
             '.class1 ': {
                 style1: 'blue',
-                'class2': {
+                '&.class2': {
                     style: 'red'
                 }
             }
         };
-        var result = '.class1{style1:blue;}.class1 class2{style:red;}';
+        var result = '.class1{style1:blue;}.class1 .class2{style:red;}';
         test.deepEqual(render(css, true), result);
         test.done();
     },
@@ -82,7 +115,7 @@ module.exports = {
             '@media (max-width=980)': {
                 '.class1': {
                     style1: 'red',
-                    ' .class2': {
+                    '& .class2': {
                         style2: 'blue'
                     }
                 }
@@ -90,7 +123,7 @@ module.exports = {
             '.class1': {
                 '@media (max-width=980)': {
                     style1: 'blue',
-                    ' .class2': {
+                    '& .class2': {
                         style2: 'red'
                     }
                 }
