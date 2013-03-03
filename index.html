@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>JCSS by tenphi</title>
-    
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -16,164 +16,327 @@
     <div class="wrapper">
       <header>
         <h1>JCSS</h1>
-        <p>Dymanic stylesheet language based on native Javascript</p>
+        <p>Handy CSS Generation using Javascript</p>
+
         <p class="view"><a href="https://github.com/tenphi/jcss">View the Project on GitHub <small>tenphi/jcss</small></a></p>
+
+
         <ul>
           <li><a href="https://github.com/tenphi/jcss/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/tenphi/jcss/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/tenphi/jcss">Fork On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/tenphi/jcss">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
-        <h3>Install via NPM</h3>
+        <h1>JCSS</h1>
 
-<p>Install <strong>jcss</strong> package via npm:</p>
+<p>Handy CSS Generator
+Now you can use Javascript for CSS declaration, and all its power at your fingertips!
+You have no need to remember a lot of rules. JCSS uses the simple hierarchical declaration as the most of other CSS-preprocessors, but using of advanced features like mixins will be as easier as you know Javascript. And I hope you know it well.
+Knowledge of the CoffeeScript can rise the usability of this library to the new level! Because it's much more simple language for declarations, you know. But in spite of this all documentation wrote by Javascript.</p>
 
-<div class="highlight">
-<pre>npm install jcss
-</pre>
-</div>
+<h2>Getting started</h2>
 
+<p>Install via NPM...</p>
 
-<h3>Wrote your styles in javascript!</h3>
+<pre><code>$ npm install jcss
+</code></pre>
 
-<p>Set your style sheets as module of your application!</p>
+<p>... or add script to your web page.</p>
 
-<div class="highlight">
-<pre><span class="cm">/* styles.js */</span>
-<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'#mydiv'</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">color</span><span class="o">:</span> <span class="s1">'#333'</span><span class="p">,</span>
-        <span class="nx">font</span><span class="o">:</span> <span class="s1">'13px/18px Helvetica'</span>
+<div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"/path/to/jcss.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<p>... or install script via bower and add via requirejs.</p>
+
+<div class="highlight"><pre>bower install git://github.com/tenphi/jcss.git
+</pre></div>
+
+<div class="highlight"><pre><span class="nx">require</span><span class="p">([</span><span class="s1">'./components/jcss/jcss'</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">jcss</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jml</span><span class="p">.</span><span class="nx">inject</span><span class="p">(</span><span class="cm">/* name */</span><span class="p">,</span> <span class="cm">/* object of styles */</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<h2>Simple rules, great opportunities</h2>
+
+<p>Let's try to learn more about JCSS. We can start with simplest example:</p>
+
+<div class="highlight"><pre><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'.class'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">color</span><span class="o">:</span> <span class="s1">'black'</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</pre>
-</div>
-
-
-<h3>Example using with Express</h3>
-
-<p>Add your styles to application:</p>
-
-<div class="highlight">
-<pre><span class="cm">/* app.js */</span>
-<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'express'</span><span class="p">).</span><span class="nx">createServer</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">jcss</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'jcss'</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">styles</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./styles'</span><span class="p">);</span>
-<span class="cm">/* ... */</span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="s1">'development'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/styles.css'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">styles</span><span class="p">));</span> <span class="c1">// full css</span>
-    <span class="p">});</span>
 <span class="p">});</span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="s1">'production'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/styles.css'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">styles</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span> <span class="c1">// minified</span>
-    <span class="p">});</span>
-<span class="p">});</span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">80</span><span class="p">);</span>
-</pre>
-</div>
+</pre></div>
 
-
-<p>Check <em>styles.css</em> in your browser.</p>
-
-<div class="highlight">
-<pre><span class="c">/* http://localhost/styles.css */</span>
-<span class="nf">#mydiv</span> <span class="p">{</span>
-    <span class="k">color</span><span class="o">:</span> <span class="m">#333</span><span class="p">;</span>
-    <span class="k">font</span><span class="o">:</span> <span class="m">13px</span><span class="o">/</span><span class="m">18px</span> <span class="n">Helvetica</span><span class="p">;</span>
+<div class="highlight"><pre><span class="nc">.class</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
 <span class="p">}</span>
-</pre>
-</div>
+</pre></div>
 
+<p>You could think that there are no benefits of using JCSS. But hold on, its just a beginning! Magic awaits us!</p>
 
-<h3>Use namespaces and splits</h3>
-
-<div class="highlight">
-<pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'#mydiv'</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">color</span><span class="o">:</span> <span class="s1">'#333'</span><span class="p">,</span>
-        <span class="s1">' div'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// #mydiv div</span>
-            <span class="nx">color</span><span class="o">:</span> <span class="s1">'#666'</span>
-        <span class="p">},</span>
-        <span class="s1">'.highlight'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// #mydiv.highlight</span>
-            <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">'#fff'</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="s1">'.button-|.big-button-'</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s1">'red'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// .button-red, .big-button-red</span>
-            <span class="nx">color</span><span class="o">:</span> <span class="s1">'red'</span>
-        <span class="p">},</span>
-        <span class="s1">'blue'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// .button-blue, .big-button-blue</span>
-            <span class="nx">color</span><span class="o">:</span> <span class="s1">'blue'</span>
-        <span class="p">},</span>
-        <span class="s1">'red|blue'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// .button-red, .button-blue, .big-button-red, .big-button-blue</span>
-            <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">'#fff'</span>
+<div class="highlight"><pre><span class="c1">// left join</span>
+<span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'.class1'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">color</span><span class="o">:</span> <span class="s1">'red'</span><span class="p">,</span>
+        <span class="s1">'.class2'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// '&amp;.class' works as well if you like it</span>
+            <span class="nx">color</span><span class="o">:</span> <span class="s1">'black'</span>
         <span class="p">}</span>
     <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">// right join</span>
+<span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'.class1'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">color</span><span class="o">:</span> <span class="s1">'red'</span><span class="p">,</span>
+        <span class="s1">'.class2&amp;'</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">color</span><span class="o">:</span> <span class="s1">'black'</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c">/* left join */</span>
+<span class="nc">.class1</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">red</span><span class="p">;</span>
 <span class="p">}</span>
-</pre>
-</div>
 
+<span class="nc">.class1.class2</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+<span class="p">}</span>
 
-<h3>Multiple styles</h3>
+<span class="c">/* right join */</span>
+<span class="nc">.class1</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">red</span><span class="p">;</span>
+<span class="p">}</span>
 
-<p>You can set many values of one style:</p>
+<span class="nc">.class2.class1</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
 
-<div class="highlight">
-<pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'.button'</span><span class="o">:</span> <span class="p">{</span>
+<p>It's simple rules for joining selectors for flexible declaration. And there is no problem if your joined selectors have a space (for example if you want to create a context like <code>.class1 .class2</code>). But '&amp;' symbol always should be at the edge of the selector.
+But what should we do if we want to create a several values for single style. We can use arrays! Here is an another simple example:</p>
+
+<div class="highlight"><pre><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'.class1'</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">background</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s1">'linear-gradient(top, #ffffff, #e6e6e6)'</span><span class="p">,</span>
-            <span class="s1">'-moz-linear-gradient(top, #ffffff, #e6e6e6)'</span><span class="p">,</span>
-            <span class="s1">'-webkit-linear-gradient(top, #ffffff, #e6e6e6)'</span>
+            <span class="s1">'url(bg1.png), url(bg2.png)'</span><span class="p">,</span> <span class="c1">// if browser supports multiple backgrounds</span>
+            <span class="s1">'url(bg.png)'</span> <span class="c1">// single background for other browsers</span>
         <span class="p">]</span>
     <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="nc">.class1</span> <span class="p">{</span>
+    <span class="k">background</span><span class="o">:</span> <span class="sx">url(bg1.png)</span><span class="o">,</span> <span class="sx">url(bg2.png)</span><span class="p">;</span>
+    <span class="k">background</span><span class="o">:</span> <span class="sx">url(bg.png)</span><span class="p">;</span>
 <span class="p">}</span>
-</pre>
-</div>
+</pre></div>
 
+<p>Now, Let's try to broke up the library with some complex example. Also, we will see how seperation of selectors works.</p>
 
-<h3>Create mixins</h3>
-
-<div class="highlight">
-<pre><span class="cm">/* app.js */</span>
-<span class="kd">var</span> <span class="nx">jcss</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'jcss'</span><span class="p">);</span>
-<span class="nx">jcss</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="s1">'borderRadius'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-    <span class="cm">/* auto join */</span>
-    <span class="k">return</span> <span class="nx">jcss</span><span class="p">.</span><span class="nx">join</span><span class="p">({</span><span class="nx">borderRadius</span><span class="o">:</span> <span class="nx">value</span><span class="p">},</span> <span class="p">[</span><span class="s1">'Moz'</span><span class="p">,</span> <span class="s1">'Webkit'</span><span class="p">]);</span>
-    <span class="cm">/* or manual */</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="nx">borderRadius</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
-        <span class="nx">MozBorderRadius</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
-        <span class="nx">WebkitBorderRadius</span><span class="o">:</span> <span class="nx">value</span>
+<div class="highlight"><pre><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'.class1,.class2'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">' .class3, .class4'</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// Also, as for clarity, we can use this notation - ' .class3| .class4'</span>
+            <span class="nx">color</span><span class="o">:</span> <span class="s1">'black'</span><span class="p">,</span>
+            <span class="nx">background</span><span class="o">:</span> <span class="s1">'transparent'</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s1">'.class2 .class3'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">background</span><span class="o">:</span> <span class="s1">'blue'</span>
     <span class="p">}</span>
 <span class="p">});</span>
+</pre></div>
 
-<span class="cm">/* styles.js */</span>
-<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'.rounded'</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">borderRadius</span><span class="o">:</span> <span class="mi">5</span> <span class="c1">// 5px</span>
-    <span class="p">}</span>
+<div class="highlight"><pre><span class="nc">.class1</span> <span class="nc">.class3</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+    <span class="k">background</span><span class="o">:</span> <span class="k">transparent</span><span class="p">;</span>
 <span class="p">}</span>
-</pre>
-</div>
 
+<span class="nc">.class1</span> <span class="nc">.class4</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+    <span class="k">background</span><span class="o">:</span> <span class="k">transparent</span><span class="p">;</span>
+<span class="p">}</span>
 
-<h3>Media Types</h3>
+<span class="nc">.class2</span> <span class="nc">.class3</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+    <span class="k">background</span><span class="o">:</span> <span class="nb">blue</span><span class="p">;</span>
+<span class="p">}</span>
 
-<div class="highlight">
-<pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'@media (min-width: 600px)'</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s1">'#hello'</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">width</span><span class="o">:</span> <span class="mi">980</span> <span class="c1">// 980px</span>
+<span class="nc">.class2</span> <span class="nc">.class4</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+    <span class="k">background</span><span class="o">:</span> <span class="k">transparent</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Well, it's not what we except. It's because JCSS not an optimizer yet. For optimization I recommend libraries like CSSO. JCSS just makes the faster code not the smaller, because redefinitions of styles work in generation step not in product. It makes your CSS really fast! And you have no need of thinking about are there too much overrides or not.</p>
+
+<h2>Mixins</h2>
+
+<p>As many CSS-preprocessors JCSS have mixins as well. But JCSS's mixins are Javascript functions. And it's really cool. Why? Take a look:</p>
+
+<div class="highlight"><pre><span class="nx">jcss</span><span class="p">.</span><span class="nx">mixins</span><span class="p">[</span><span class="s1">'borderRadius'</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">WebkitBorderRadius</span><span class="o">:</span> <span class="nx">val</span><span class="p">,</span>
+        <span class="nx">MozBorderRadius</span><span class="o">:</span> <span class="nx">val</span><span class="p">,</span>
+        <span class="nx">borderRadius</span><span class="o">:</span> <span class="nx">val</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+<span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'.class'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">borderRadius</span><span class="o">:</span> <span class="s1">'5px'</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="nc">.class</span> <span class="p">{</span>
+    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
+    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
+    <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Wow! Mixins are great, aren't they?</p>
+
+<h2>Variables &amp; More</h2>
+
+<p>Javascript provides you many opportunities of generating CSS which are limited only by your imagination. DO WHAT YOU WANT!</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">width</span> <span class="o">=</span> <span class="s1">'100px'</span><span class="p">;</span>
+<span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">out</span><span class="p">[</span><span class="s1">'.class'</span> <span class="o">+</span> <span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">width</span><span class="o">:</span> <span class="nx">width</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+<span class="p">}());</span>
+</pre></div>
+
+<p>You already now what output should be here :)</p>
+
+<h2>Extras</h2>
+
+<p>Don't forget about @-rules. You can use it too, but more flexible. Here is some examples:</p>
+
+<h3>
+<a href="https://github.com/media" class="user-mention">@media</a> and @supports</h3>
+
+<div class="highlight"><pre><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'@media (max-width=980)'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">'.class1'</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">style1</span><span class="o">:</span> <span class="s1">'red'</span><span class="p">,</span>
+            <span class="s1">'&amp; .class2'</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">style2</span><span class="o">:</span> <span class="s1">'blue'</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s1">'.class1'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">'@media (max-width=980)'</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">style1</span><span class="o">:</span> <span class="s1">'blue'</span><span class="p">,</span>
+            <span class="s1">'&amp; .class2'</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">style2</span><span class="o">:</span> <span class="s1">'red'</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</pre>
-</div>
+<span class="p">});</span>
+</pre></div>
 
+<div class="highlight"><pre><span class="k">@media</span> <span class="o">(</span><span class="nt">max-width</span><span class="o">=</span><span class="nt">980</span><span class="o">)</span> <span class="p">{</span>
+    <span class="nc">.class1</span> <span class="p">{</span>
+        <span class="n">style1</span><span class="o">:</span> <span class="nb">blue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nc">.class1</span> <span class="nc">.class2</span><span class="p">{</span>
+        <span class="n">style2</span><span class="o">:</span> <span class="nb">red</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Isn't this cool? JCSS overrided the rules.</p>
+
+<h3>@font-face and <a href="https://github.com/page" class="user-mention">@page</a>
+</h3>
+
+<div class="highlight"><pre><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'@font-face'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">fontFamily</span><span class="o">:</span> <span class="s1">'FontName'</span><span class="p">,</span>
+        <span class="nx">src</span><span class="o">:</span> <span class="s1">'url("fontname.otf")'</span>
+    <span class="p">},</span>
+    <span class="s1">'@page :first'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">margin</span><span class="o">:</span> <span class="s1">'1cm'</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="k">@font-face</span> <span class="p">{</span>
+  <span class="nt">font-family</span><span class="o">:</span> <span class="nt">FontName</span><span class="o">;</span>
+  <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="s2">"fontname.otf"</span><span class="o">);</span>
+<span class="p">}</span>
+
+<span class="k">@page</span> <span class="nd">:first</span> <span class="p">{</span>
+  <span class="nt">margin</span><span class="o">:</span> <span class="nt">1cm</span><span class="o">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3>
+<a href="https://github.com/import" class="user-mention">@import</a> and <a href="https://github.com/charset" class="user-mention">@charset</a>
+</h3>
+
+<div class="highlight"><pre><span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'@charset'</span><span class="o">:</span> <span class="s1">'"windows-1251"'</span><span class="p">,</span>
+    <span class="s1">'@import'</span><span class="o">:</span> <span class="s1">'"another.css" all'</span>
+<span class="p">});</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="k">@charset</span> <span class="s2">"windows-1251"</span><span class="p">;</span>
+
+<span class="k">@import</span> <span class="s2">"another.css"</span> <span class="nt">all</span><span class="p">;</span>
+</pre></div>
+
+<p>Yep! Not so cool. But we can live with that because it is very rare use case.</p>
+
+<h2>Custom Objects as style value</h2>
+
+<p>For example, if you have a super color library you may want to use it with JCSS. No problem!</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Color</span><span class="p">(</span><span class="s1">'red'</span><span class="p">).</span><span class="nx">lighten</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span> <span class="c1">// a lighter shade of red</span>
+<span class="nx">jcss</span><span class="p">.</span><span class="nx">render</span><span class="p">({</span>
+    <span class="s1">'.class'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">color</span><span class="o">:</span> <span class="nx">color</span> <span class="c1">// &lt;- it's our Object! it will transform into string!</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>If Color prototype have <code>toString()</code> method it would use for getting value of style.</p>
+
+<h2>That's all, folks! :)</h2>
+
+<h2>License</h2>
+
+<p>(The MIT License)</p>
+
+<p>Copyright (c) 20011-2013 Andrey Yamanov <a href="mailto:tenphi@gmail.com">tenphi@gmail.com</a></p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/tenphi">tenphi</a></p>
@@ -181,5 +344,16 @@
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("var _gaq = _gaq || [];   _gaq.push([&#39;_setAccount&#39;, &#39;UA-10996362-3&#39;]);   _gaq.push([&#39;_trackPageview&#39;]);    (function() {     var ga = document.createElement(&#39;script&#39;); ga.type = &#39;text/javascript&#39;; ga.async = true;     ga.src = (&#39;https:&#39; == document.location.protocol ? &#39;https://ssl&#39; : &#39;http://www&#39;) + &#39;.google-analytics.com/ga.js&#39;;     var s = document.getElementsByTagName(&#39;script&#39;)[0]; s.parentNode.insertBefore(ga, s);   })();");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
