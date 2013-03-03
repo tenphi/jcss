@@ -2,7 +2,7 @@
     "author": "Andrey Yamanov <tenphi@gmail.com> (http://tenphi.me)",
     "name": "jcss",
     "description": "CSS Generator",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "homepage": "http://github.com/tenphi/jcss",
     "repository": {
         "type": "git",

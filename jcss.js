@@ -120,9 +120,16 @@
         return name.replace(/\s+$/, '');
     };
 
+    var containers = ['media', 'supports'];
+    var multipliers = ['font-face', 'page'];
+    var plains = ['import', 'charset'];
+
     var renderUtils = jcss.renderUtils = {
         handleStyleName: handleStyleName,
-        handleName: handleName
+        handleName: handleName,
+        containers: containers,
+        multipliers: multipliers,
+        plains: plains
     };
 
     var isInnerSelector = function isInnerSelector (sel) {
@@ -134,6 +141,39 @@
         } else {
             return 0;
         }
+    };
+
+    var isContainer = function isContainer (selector) {
+        var i, len, name;
+        for (i = 0, len = containers.length; i < len; i++) {
+            name = '@' + containers[i];
+            if (selector.slice(0, name.length) === name) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    var isMultiplier = function isMultiplier (selector) {
+        var i, len, name;
+        for (i = 0, len = multipliers.length; i < len; i++) {
+            name = '@' + multipliers[i];
+            if (selector.slice(0, name.length) === name) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    var isPlain = function isPlain (selector) {
+        var i, len, name;
+        for (i = 0, len = plains.length; i < len; i++) {
+            name = '@' + plains[i];
+            if (selector.slice(0, name.length) === name) {
+                return true;
+            }
+        }
+        return false;
     };
 
     var addNamespace = function addNamespace (sel, namespace, ssel) {
@@ -196,18 +236,27 @@
     /* normalize */
 
     var normalize = jcss.normalize = function normalize (css, namespace) {
-        var newcss = {}, selector, styles, style, nsel, tmp, newstyles, val, values, i, selns, selns2;
+        var newcss = {}, selector, styles, style, nsel, tmp, newstyles, val, i, selns, selns2;
         namespace = namespace || '';
         for (selector in css) {
             styles = css[selector];
             selns = addNamespace(selector, namespace);
-            if (selector.charAt(0) === '@') {
+            if (isContainer(selector)) {
                 if (!newcss[selector]) {
                     newcss[selector] = {};
                 }
                 newstyles = {};
                 newstyles[namespace] = styles;
                 extend(newcss[selector], normalize(newstyles));
+                continue;
+            } else if (isMultiplier(selector) || isPlain(selector)) {
+                if (!newcss[selector]) {
+                    newcss[selector] = [];
+                }
+                if (!isArray(styles)) {
+                    styles = [styles];
+                }
+                newcss[selector] = newcss[selector].concat(styles);
                 continue;
             }
             tmp = selector.replace(/\|/g, ',').split(',');
@@ -261,7 +310,7 @@
     /* render */
 
     var render = jcss.render = function render (css, min, tab) {
-        var out = '', styles, sel, offset, strTab, style, val, fstyle, values, i;
+        var out = '', styles, sel, strTab, style, val, fstyle, values, i, tmp;
 
         if (!isPlainObject(css)) {
             throw 'jcss: wrong input data - ' + typeof(css);
@@ -280,17 +329,32 @@
 
         for (sel in css) {
             styles = css[sel];
-            if (sel.charAt(0) === '@') {
+            if (isPlain(sel)) {
+                for (i = 0; i < styles.length; i++) {
+                    val = styles[i];
+                    if (min) {
+                        out += sel + charSpace + val + charDel;
+                    } else {
+                        out += sel + charSpace + val + charDel + charNl2;
+                    }
+                }
+            } else if (isContainer(sel)) {
                 if (min) {
                     out += strTab + sel + charOpen + render(styles, min, tab + 1) + charClose;
                 } else {
                     out += strTab + sel + charSpace + charOpen + charNl + charNl + render(styles, min, tab + 1) + strTab + charClose + charNl2;
                 }
+            } else if (isMultiplier(sel)) {
+                for (i = 0; i < styles.length; i++) {
+                    tmp = {};
+                    tmp[''] = styles[i];
+                    out += sel + render(tmp, min);
+                }
             }
         }
         for (sel in css) {
             styles = css[sel];
-            if (sel.charAt(0) === '@')
+            if (isContainer(sel) || isMultiplier(sel) || isPlain(sel))
                 continue;
             if (min) {
                 out += sel + charOpen;

@@ -110,28 +110,58 @@ module.exports = {
         test.deepEqual(render(css, true), result);
         test.done();
     },
-    extra: function(test) {
-        var css = {
-            '@media (max-width=980)': {
-                '.class1': {
-                    style1: 'red',
-                    '& .class2': {
-                        style2: 'blue'
-                    }
-                }
-            },
-            '.class1': {
+    extra: {
+        media: function(test) {
+            var css = {
                 '@media (max-width=980)': {
-                    style1: 'blue',
-                    '& .class2': {
-                        style2: 'red'
+                    '.class1': {
+                        style1: 'red',
+                        '& .class2': {
+                            style2: 'blue'
+                        }
+                    }
+                },
+                '.class1': {
+                    '@media (max-width=980)': {
+                        style1: 'blue',
+                        '& .class2': {
+                            style2: 'red'
+                        }
                     }
                 }
-            }
-        };
-        var result = '@media (max-width=980){.class1{style1:blue;}.class1 .class2{style2:red;}}';
-        test.deepEqual(render(css, true), result);
-        test.done();
+            };
+            var result = '@media (max-width=980){.class1{style1:blue;}.class1 .class2{style2:red;}}';
+            test.deepEqual(render(css, true), result);
+            test.done();
+        },
+        fontFace: function(test) {
+            var css = {
+                '@font-face': [
+                    {
+                        fontFamily: 'FontName1',
+                        src: 'url(fontname1.otf)'
+                    },
+                    {
+                        fontFamily: 'FontName2',
+                        src: 'url(fontname2.otf)'
+                    }
+                ]
+            };
+            var result = '@font-face{font-family:FontName1;src:url(fontname1.otf);}@font-face{font-family:FontName2;src:url(fontname2.otf);}';
+            test.deepEqual(render(css, true), result);
+            test.done();
+        },
+        import: function(test) {
+            var css = {
+                '@import': [
+                    'url("one.css") all',
+                    'url("two.css") all'
+                ]
+            };
+            var result = '@import url("one.css") all;@import url("two.css") all;';
+            test.deepEqual(render(css, true), result);
+            test.done();
+        }
     },
     mixin: {
         simple: function(test) {
