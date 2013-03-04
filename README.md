@@ -2,8 +2,11 @@ JCSS
 ===
 
 Handy CSS Generator
+
 Now you can use Javascript for CSS declaration, and all its power at your fingertips!
+
 You have no need to remember a lot of rules. JCSS uses the simple hierarchical declaration as the most of other CSS-preprocessors, but using of advanced features like mixins will be as easier as you know Javascript. And I hope you know it well.
+
 Knowledge of the CoffeeScript can rise the usability of this library to the new level! Because it's much more simple language for declarations, you know. But in spite of this all documentation wrote by Javascript.
 
 ## Getting started
@@ -199,7 +202,7 @@ jcss.render(function() {
 }());
 ```
 
-You already now what output should be here :)
+You already know what output should be here :)
 
 ## Extras
 
