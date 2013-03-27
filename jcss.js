@@ -176,9 +176,9 @@
         return false;
     };
 
-    var addNamespace = function addNamespace (sel, namespace, ssel) {
-        var pos = isInnerSelector(sel);
-        var fsel = (ssel && ssel.replace('&', '')) || sel;
+    var addNamespace = function addNamespace (ssel, namespace) {
+        var pos = isInnerSelector(ssel);
+        var fsel = ssel && ssel.replace('&', '');
         if (!namespace) {
             return fsel;
         }
@@ -188,7 +188,7 @@
         } else if (pos === 2) {
             return fsel + namespace;
         } else {
-            throw new Error('jcss: wrong inner selector', sel);
+            throw new Error('jcss: wrong inner selector', ssel);
         }
     };
 
@@ -263,7 +263,7 @@
             if (tmp.length > 1) {
                 for (i = 0; i < tmp.length; i++) {
                     nsel = tmp[i];
-                    selns2 = addNamespace(selector, namespace, nsel);
+                    selns2 = addNamespace(nsel || selector, namespace);
                     newstyles = {};
                     newstyles[selns2] = extend({}, styles);
                     extend(newcss, jcss.normalize(newstyles));

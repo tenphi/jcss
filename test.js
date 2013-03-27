@@ -77,7 +77,7 @@ module.exports = {
         var css = {
             '.class1|.class2': {
                 style1: 'red',
-                '& .class3| .class4': {
+                '& .class3|.class4 &': {
                     style2: 'blue'
                 }
             },
@@ -87,7 +87,7 @@ module.exports = {
                 }
             }
         };
-        var result = '.class1{style1:red;}.class1 .class3{style2:green;}.class1 .class4{style2:blue;}.class2{style1:red;}.class2 .class3{style2:blue;}.class2 .class4{style2:blue;}';
+        var result = '.class1{style1:red;}.class1 .class3{style2:green;}.class4 .class1{style2:blue;}.class2{style1:red;}.class2 .class3{style2:blue;}.class4 .class2{style2:blue;}';
         test.deepEqual(render(css, true), result);
         test.done();
     },
