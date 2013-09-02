@@ -8,7 +8,7 @@
 
   /* decorators */
 
-  var charOpen = '{', charClose = '}', charColon = ':', charNl = '\r\n', charNl2 = '\r\n\r\n', charDel = ';', charSpace = ' ', charTab = '  ';
+  var charOpen = '{', charClose = '}', charColon = ':', charNl = '\n', charNl2 = '\n\n', charDel = ';', charSpace = ' ', charTab = '  ';
 
   /* utils */
 
@@ -136,6 +136,7 @@
   };
 
   var isInnerSelector = function isInnerSelector (sel) {
+    sel = sel.trim();
     var len = sel.length;
     if (sel.charAt(0) === '&') {
       return 1;
@@ -186,12 +187,18 @@
       return fsel;
     }
     fsel = fsel.replace('&', '');
-    if (pos === 1 || !pos) {
-      return namespace + fsel;
-    } else if (pos === 2) {
-      return fsel + namespace;
-    } else {
-      throw new Error('jcss: wrong inner selector', ssel);
+    switch(pos) {
+      case 0:
+        return namespace + ' ' + fsel.trim();
+        break;
+      case 1:
+        return namespace + fsel;
+        break;
+      case 2:
+        return fsel + namespace;
+        break;
+      default:
+        throw new Error('jcss: wrong inner selector', ssel);
     }
   };
 
@@ -269,6 +276,7 @@
         extend(newcss[selector], normalize(newstyles));
         continue;
       } else if (isMultiplier(selector) || isPlain(selector)) {
+        selector = selector.trim();
         if (!newcss[selector]) {
           newcss[selector] = [];
         }
@@ -284,7 +292,7 @@
           nsel = tmp[i];
           selns2 = addNamespace(nsel || selector, namespace);
           newstyles = {};
-          newstyles[selns2] = extend({}, styles);
+          newstyles[selns2.trim()] = extend({}, styles);
           extend(newcss, jcss.normalize(newstyles));
         }
         continue;

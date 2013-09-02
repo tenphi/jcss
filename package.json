@@ -1,22 +1,23 @@
 {
-    "author": "Andrey Yamanov <tenphi@gmail.com> (http://tenphi.me)",
-    "name": "jcss",
-    "description": "CSS Generator",
-    "version": "0.5.4",
-    "homepage": "http://github.com/tenphi/jcss",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/tenphi/jcss.git"
-    },
-    "main": "./jcss.js",
-    "keywords": ["css", "engine", "render"],
-    "dependencies": {},
-    "devDependencies": {
-        "nodeunit": "0.7.x"
-    },
-    "scripts": {
-        "test": "nodeunit ./test.js"
-    },
-    "optionalDependencies": {},
-    "engine": "node >= 0.4.1"
+  "author": "Andrey Yamanov <tenphi@gmail.com> (http://tenphi.me)",
+  "name": "jcss",
+  "description": "CSS Generator",
+  "version": "0.6.0",
+  "homepage": "http://github.com/tenphi/jcss",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tenphi/jcss.git"
+  },
+  "main": "./jcss.js",
+  "keywords": ["css", "engine", "render"],
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "~1.12.1",
+    "chai": "~1.7.2"
+  },
+  "scripts": {
+    "test": "mocha ./test.js"
+  },
+  "optionalDependencies": {},
+  "engine": "node >= 0.4.1"
 }

@@ -5,9 +5,14 @@ Handy CSS Generator
 
 Now you can use Javascript for CSS declaration, and all its power at your fingertips!
 
-You have no need to remember a lot of rules. JCSS uses the simple hierarchical declaration as the most of other CSS-preprocessors, but using of advanced features like mixins will be as easier as you know Javascript. And I hope you know it well.
+You have no need to remember a lot of rules. JCSS uses the simple hierarchical declaration as the most of popular CSS-preprocessors (like LESS, Stylus, Sass), but using of advanced features like mixins will be as easier as you know Javascript. And I hope you know it well.
 
-Knowledge of the CoffeeScript can rise the usability of this library to the new level! Because it's much more simple language for declarations, you know. But in spite of this all documentation wrote by Javascript.
+Knowledge of the CoffeeScript can rise the usability of this library up to the new level! Because it's much more simple language for declarations, you know. In spite of this, all documentation wrote by Javascript.
+
+## Warning
+
+I should warn you that using of this library is not necessary in most of the cases. I recommend you to use any other modern css-framework (that based on CSS instead of JS).
+Probably you could find some situations (as I did) where JCSS shows itself. Anyway, use it with caution.
 
 ## Getting started
 Install via NPM...
@@ -58,7 +63,7 @@ You could think that there are no benefits of using JCSS. But hold on, its just 
 jcss.render({
     '.class1': {
         color: 'red',
-        '.class2': { // '&.class' works as well if you like it
+        '.class2': { // '& .class' works as well if you like it
             color: 'black'
         }
     }
@@ -68,7 +73,7 @@ jcss.render({
 jcss.render({
     '.class1': {
         color: 'red',
-        '.class2&': {
+        '.class2 &': {
             color: 'black'
         }
     }
@@ -81,7 +86,7 @@ jcss.render({
     color: red;
 }
 
-.class1.class2 {
+.class1 .class2 {
     color: black;
 }
 
@@ -90,12 +95,12 @@ jcss.render({
     color: red;
 }
 
-.class2.class1 {
+.class2 .class1 {
     color: black;
 }
 ```
 
-It's simple rules for joining selectors for flexible declaration. And there is no problem if your joined selectors have a space (for example if you want to create a context like `.class1 .class2`). But '&' symbol always should be at the edge of the selector.
+It's simple rules for joining selectors for flexible declaration.
 But what should we do if we want to create a several values for single style. We can use arrays! Here is an another simple example:
 
 ```javascript
@@ -116,12 +121,12 @@ jcss.render({
 }
 ```
 
-Now, Let's try to broke up the library with some complex example. Also, we will see how seperation of selectors works.
+Now, Let's try to broke up the library with some complex example. Also, we will see how separation of selectors works.
 
 ```javascript
 jcss.render({
-    '.class1,.class2': {
-        ' .class3, .class4': { // Also, as for clarity, we can use this notation - ' .class3| .class4'
+    '.class1, .class2': {
+        '.class3, .class4': { // Also, as for clarity, we can use this notation - ' .class3| .class4'
             color: 'black',
             background: 'transparent'
         }
@@ -154,7 +159,7 @@ jcss.render({
 }
 ```
 
-Well, it's not what we except. It's because JCSS not an optimizer yet. For optimization I recommend libraries like CSSO. JCSS just makes the faster code not the smaller, because redefinitions of styles work in generation step not in product. It makes your CSS really fast! And you have no need of thinking about are there too much overrides or not.
+Well, it's not what we except. It's because JCSS not an optimizer yet. For optimization I recommend libraries like CSSO. JCSS just makes fast code, not small, because redefinitions of styles work in generation step, not in product. It makes your CSS really fast! And you have no need of thinking about are there too much overrides or not.
 
 ## Mixins
 
@@ -233,12 +238,15 @@ jcss.render({
 
 ```css
 @media (max-width=980) {
+
     .class1 {
         style1: blue;
     }
+
     .class1 .class2{
         style2: red;
     }
+
 }
 ```
 
