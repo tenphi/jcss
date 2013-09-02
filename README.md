@@ -1,4 +1,4 @@
-JCSS
+JCSS [![Build Status](https://travis-ci.org/tenphi/jcss.png)](https://travis-ci.org/tenphi/jcss)
 ===
 
 Handy CSS Generator
