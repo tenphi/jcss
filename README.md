@@ -35,7 +35,7 @@ bower install git://github.com/tenphi/jcss.git
 
 ```javascript
 require(['./components/jcss/jcss'], function(jcss) {
-  jml.inject(/* name */, /* object of styles */);
+  jcss.inject(/* name */, /* object of styles */);
 });
 ```
 
